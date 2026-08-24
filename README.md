@@ -20,6 +20,12 @@
 **Final year project — BSc (Hons) Cloud Computing, TU Dublin.**
 Cathal Flood · C22312211 · April 2026
 
+### 📄 [Read the full report → `Final_Report.pdf`](Final_Report.pdf)
+
+105 pages covering the literature review, requirements analysis, three development
+iterations, testing methodology and critical evaluation. Opens in the browser — no download
+needed. Credentials visible in configuration screenshots have been redacted.
+
 ---
 
 ## The problem
@@ -260,6 +266,7 @@ runs on local Grafana auth.
 ## Repository layout
 
 ```
+Final_Report.pdf            the full 105-page project report
 docker-compose.yml          full stack definition
 scanner/                    QR scanner + generator, nginx same-origin proxy
   ├─ index.html             mobile check-in interface
