@@ -8,6 +8,35 @@ pipeline → storage → dashboards.
 
 ## Dashboards
 
+### Operations overview
+
+The at-a-glance view for a building manager: check-ins today, active rooms, fraud flags,
+per-room occupancy gauges against capacity, check-in share by building, and a seven-day
+timeline with the live activity feed beneath it.
+
+![Operations overview](grafana-operations-overview.png)
+
+### Weekly overview and student engagement
+
+Week-on-week comparison, 28-day volume, peak-hour analysis, and the student engagement
+panels — most active students, unique students per day, and distribution of check-ins.
+
+![Weekly overview](grafana-weekly-overview.png)
+
+### Room analytics
+
+Check-ins per room over time, check-ins versus check-outs, share of total by room, and the
+room summary table ranked by volume.
+
+![Room analytics](grafana-room-analytics.png)
+
+### Room and building intelligence
+
+Occupancy trends in six-hour windows, building usage totals, and the security panels —
+submission volume per student and a high-submission-count review queue.
+
+![Building intelligence](grafana-building-intelligence.png)
+
 ### Live attendance dashboard
 
 The main operational view. Stat tiles for total check-ins, check-outs, active rooms and

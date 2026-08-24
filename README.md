@@ -17,12 +17,12 @@
 
 <p align="center">
   <a href="screenshots/">
-    <img src="screenshots/grafana-live-dashboard.png" alt="Live attendance and occupancy dashboard in Grafana" width="900">
+    <img src="screenshots/grafana-operations-overview.png" alt="Room occupancy and attendance dashboard in Grafana" width="900">
   </a>
 </p>
 
 <p align="center">
-  <sub>Live occupancy dashboard — check-ins, check-outs, active rooms and a real-time activity feed.<br>
+  <sub>Operations dashboard — per-room occupancy against capacity, check-ins by building, fraud flags and a live activity feed.<br>
   <a href="screenshots/">See all dashboards →</a></sub>
 </p>
 
