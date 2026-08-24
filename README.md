@@ -65,6 +65,12 @@ time-series database that drives live dashboards within seconds.
 Requirements were shaped by a conversation with a TU Dublin building manager about how
 occupancy management actually works day to day, rather than assumed.
 
+> **Where this came from.** The Year 3 group project behind this was an
+> [RFID attendance monitor](https://github.com/floodcathal/rfid-attendance-monitor) — ESP32
+> and MFRC522 logging card scans into a Google Sheet. Its central weakness was that the card
+> *was* the credential: clonable, shareable, and tied to no verified person. Fixing that is
+> what this project is about.
+
 ## What it does
 
 - **Scan to check in / out.** Mobile-first web scanner reads a room QR code, derives
