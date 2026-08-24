@@ -1,0 +1,29 @@
+option task = { 
+  name: "Aggregate to Hourly",
+  every: 1h,
+  offset: 5m
+}
+
+// hourly tasks
+// Runs every hour, aggregates last hour of data
+
+
+
+// Query raw data from last hour
+from(bucket: "attendance")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "attendance")
+  |> filter(fn: (r) => r._field == "value")
+  
+  // Group by hour, room, action
+  |> aggregateWindow(
+      every: 1h,
+      fn: sum,
+      createEmpty: false
+  )
+  
+  // Add metadata
+  |> set(key: "_measurement", value: "attendance_hourly")
+  
+  // Write to hourly bucket
+  |> to(bucket: "attendance_hourly", org: "myorg")

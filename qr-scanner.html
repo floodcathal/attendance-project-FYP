@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TU Dublin Attendance Check-In</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        #reader {
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .room-display {
+            background: #f0f4ff;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .room-display h3 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .room-display p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #5568d3;
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status-message {
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #856404;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .scan-again-btn {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="tudublin.png" width="450" height="250" alt="logo"/>
+            <p>Room Attendance Check-In</p>
+        </div>
+
+        <div class="card">
+            <div class="instructions">
+                <strong>How to use:</strong><br>
+                1. Point camera at room QR code<br>
+                2. Enter your student ID<br>
+                3. Select check-in or check-out<br>
+                4. Submit
+            </div>
+
+            <div id="reader"></div>
+            
+            <div id="form-section" class="form-section">
+                <div class="room-display">
+                    <h3>Room: <span id="room-display">-</span></h3>
+                    <p>
+                        Building: <span id="building-display">-</span> | 
+                        Floor: <span id="floor-display">-</span>
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="student-id">Student ID</label>
+                    <input 
+                        type="text" 
+                        id="student-id" 
+                        placeholder="C22312211"
+                        maxlength="9"
+                        pattern="C\d{8}"
+                    >
+                    <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+                        Format: C followed by 8 digits
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>Action</label>
+                    <div class="action-buttons">
+                        <button class="action-btn" id="check-in-btn" onclick="selectAction('check-in')">
+                            Check In
+                        </button>
+                        <button class="action-btn" id="check-out-btn" onclick="selectAction('check-out')">
+                            Check Out
+                        </button>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="submitAttendance()">
+                    Submit Attendance
+                </button>
+
+                <button class="scan-again-btn" onclick="scanAgain()">
+                    Scan Another Room
+                </button>
+            </div>
+
+            <div id="status" class="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        let scannedRoom = null;
+        let selectedAction = null;
+        let html5QrCode = null;
+
+        // IMPORTANT: Replace this with your laptop's IP address
+        // Find it using: ipconfig (Windows) or ifconfig (Mac/Linux)
+        const NODE_RED_URL = ' https://192.168.0.93:1880/attendance/submit';
+        
+        // If testing on phone, change to something like:
+        // const NODE_RED_URL = 'http://192.168.1.100:1880/attendance/submit';
+
+        // Warn if URL not configured (when page loads)
+        if (NODE_RED_URL.includes('REPLACE-WITH')) {
+            console.warn('Node-RED URL not set! Edit qr-scanner.html or use ?nodeRedUrl=https://YOUR-TUNNEL.trycloudflare.com');
+        }
+
+        function startScanner() {
+            html5QrCode = new Html5Qrcode("reader");
+            
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 }
+            };
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                onScanSuccess,
+                onScanError
+            ).catch(err => {
+                console.error("Camera error:", err);
+                document.getElementById('status').className = 'status-message error';
+                document.getElementById('status').innerHTML = 
+                    '<strong>Camera Error</strong><br>' +
+                    'Please allow camera access and refresh the page.<br>' +
+                    '<small>' + err + '</small>';
+            });
+        }
+
+        function onScanSuccess(decodedText) {
+            console.log("QR Code detected:", decodedText);
+            
+            try {
+                scannedRoom = JSON.parse(decodedText);
+                
+                // Validate room data
+                if (!scannedRoom.roomId) {
+                    throw new Error("Invalid QR code - missing room ID");
+                }
+                
+                // Stop scanning
+                html5QrCode.stop().then(() => {
+                    // Update UI
+                    document.getElementById('room-display').textContent = scannedRoom.roomId;
+                    document.getElementById('building-display').textContent = scannedRoom.building || 'Unknown';
+                    document.getElementById('floor-display').textContent = scannedRoom.floor || 'Unknown';
+                    
+                    // Show form
+                    document.getElementById('reader').style.display = 'none';
+                    document.getElementById('form-section').classList.add('active');
+                    
+                    // Focus on student ID input
+                    document.getElementById('student-id').focus();
+                }).catch(err => {
+                    console.error("Error stopping scanner:", err);
+                });
+                
+            } catch (err) {
+                console.error("Parse error:", err);
+                showStatus('Invalid QR code. Please scan a room QR code.', 'error');
+            }
+        }
+
+        function onScanError(errorMessage) {
+            // Ignore - scanner constantly tries to detect QR codes
+        }
+
+        function selectAction(action) {
+            selectedAction = action;
+            
+            // Update button styles
+            document.getElementById('check-in-btn').classList.remove('selected');
+            document.getElementById('check-out-btn').classList.remove('selected');
+            
+            if (action === 'check-in') {
+                document.getElementById('check-in-btn').classList.add('selected');
+            } else {
+                document.getElementById('check-out-btn').classList.add('selected');
+            }
+        }
+
+        function validateStudentId(studentId) {
+            // Must be C followed by 8 digits
+            const pattern = /^C\d{8}$/;
+            return pattern.test(studentId);
+        }
+
+        function submitAttendance() {
+            if (NODE_RED_URL.includes('REPLACE-WITH')) {
+                showStatus(
+                    'Node-RED URL not configured!<br>' +
+                    'Edit qr-scanner.html and replace REPLACE-WITH-YOUR-NODERED-TUNNEL with your Cloudflare tunnel URL.<br>' +
+                    '<small>Or add ?nodeRedUrl=https://YOUR-TUNNEL.trycloudflare.com to the scanner URL</small>',
+                    'error'
+                );
+                return;
+            }
+            const studentId = document.getElementById('student-id').value.trim();
+            
+            // Validate
+            if (!studentId) {
+                showStatus('Please enter your student ID', 'error');
+                return;
+            }
+            
+            if (!validateStudentId(studentId)) {
+                showStatus('Invalid student ID format. Must be C followed by 8 digits (e.g., C22312211)', 'error');
+                return;
+            }
+            
+            if (!selectedAction) {
+                showStatus('Please select Check In or Check Out', 'error');
+                return;
+            }
+            
+            // Prepare data
+            const attendanceData = {
+                roomId: scannedRoom.roomId,
+                building: scannedRoom.building,
+                floor: scannedRoom.floor,
+                studentId: studentId,
+                action: selectedAction,
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log("Submitting:", attendanceData);
+            
+            // Show loading
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Send to Node-RED
+            fetch(NODE_RED_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(attendanceData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+                return response.json().catch(() => ({}));
+            })
+            .then(data => {
+                console.log("Success:", data);
+                showStatus(
+                    `✅ Success!<br>` +
+                    `${selectedAction === 'check-in' ? 'Checked into' : 'Checked out of'} ` +
+                    `room ${scannedRoom.roomId}<br>` +
+                    `<small>${new Date().toLocaleTimeString()}</small>`,
+                    'success'
+                );
+                
+                // Reset form
+                document.getElementById('student-id').value = '';
+                selectedAction = null;
+                document.getElementById('check-in-btn').classList.remove('selected');
+                document.getElementById('check-out-btn').classList.remove('selected');
+                
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showStatus(
+                    'Submission failed<br>' +
+                    'Please check your WiFi connection and try again.<br>' +
+                    '<small>' + error.message + '</small>',
+                    'error'
+                );
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Attendance';
+            });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = 'status-message ' + type;
+            status.innerHTML = message;
+            
+            // Hide after 5 seconds if success
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function scanAgain() {
+            // Reset everything
+            document.getElementById('form-section').classList.remove('active');
+            document.getElementById('reader').style.display = 'block';
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('student-id').value = '';
+            selectedAction = null;
+            scannedRoom = null;
+            
+            // Restart scanner
+            startScanner();
+        }
+
+        // Start scanner when page loads
+        window.onload = function() {
+            startScanner();
+        };
+    </script>
+</body>
+</html>

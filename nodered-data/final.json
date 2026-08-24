@@ -1,0 +1,22 @@
+[
+    {
+        "id": "7d8ee61d6d28849c",
+        "type": "function",
+        "z": "80882397d7e5da9c",
+        "name": "Success Response with CORS",
+        "func": "// Success response with CORS headers\nmsg.statusCode = 200;\nmsg.headers = {\n    'Access-Control-Allow-Origin': 'https://scanner.tudublinattendanceproject.com',\n    'Access-Control-Allow-Methods': 'POST, OPTIONS',\n    'Access-Control-Allow-Headers': 'content-type, cf-access-authenticated-user-email, authorization',\n    'Access-Control-Allow-Credentials': 'true'\n};\nmsg.payload = {\n    success: true,\n    message: 'Check-in successful',\n    studentId: msg.payload.studentId || msg.authenticatedStudentId,\n    roomId: msg.payload.roomId,\n    action: msg.payload.action\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1070,
+        "y": 320,
+        "wires": [
+            [
+                "a5eca14f104d6f08"
+            ]
+        ]
+    }
+]

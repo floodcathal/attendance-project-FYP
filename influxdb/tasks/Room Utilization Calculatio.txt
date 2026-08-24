@@ -1,0 +1,28 @@
+option task = { 
+  name: "Room Utilization Calculation",
+  every: 1h,
+  offset: 10m
+}
+
+
+
+from(bucket: "attendance_hourly")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "attendance_hourly")
+  |> filter(fn: (r) => r._field == "max_occupancy")
+
+  |> map(fn: (r) => ({
+      r with
+      _value: float(v: r._value) / float(v:
+        if r.roomId == "TN101" then 50
+        else if r.roomId == "TN102" then 50
+        else if r.roomId == "TN103" then 50
+        else if r.roomId == "TN210" then 30
+        else if r.roomId == "TN212" then 30
+        else 1
+      ) * 100.0,
+      _field: "utilization_percent"
+  }))
+
+  |> set(key: "_measurement", value: "room_utilization")
+  |> to(bucket: "attendance_hourly", org: "myorg")

@@ -1,0 +1,33 @@
+option task = { 
+  name: "Aggregate to Daily",
+  every: 1d,
+  offset: 10m
+}
+
+// daily aggregation task
+// Runs every day at midight, aggregates last day
+
+
+
+// Query hourly data from last day
+from(bucket: "attendance_hourly")
+  |> range(start: -1d)
+  |> filter(fn: (r) => r._measurement == "attendance_hourly")
+  |> filter(fn: (r) => r._field == "value")
+  
+  // Group by day, room
+  |> aggregateWindow(
+      every: 1d,
+      fn: sum,
+      createEmpty: false
+  )
+  
+  // Calculate statistics
+  |> group(columns: ["roomId", "building"])
+  |> sum()
+  
+  // Add metadata
+  |> set(key: "_measurement", value: "attendance_daily")
+  
+  // Write to daily bucket
+  |> to(bucket: "attendance_daily", org: "myorg")
