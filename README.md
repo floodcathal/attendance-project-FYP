@@ -15,6 +15,17 @@
   <img src="https://img.shields.io/badge/Cloudflare-Zero%20Trust-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare">
 </p>
 
+<p align="center">
+  <a href="screenshots/">
+    <img src="screenshots/grafana-live-dashboard.png" alt="Live attendance and occupancy dashboard in Grafana" width="900">
+  </a>
+</p>
+
+<p align="center">
+  <sub>Live occupancy dashboard — check-ins, check-outs, active rooms and a real-time activity feed.<br>
+  <a href="screenshots/">See all dashboards →</a></sub>
+</p>
+
 ---
 
 **Final year project — BSc (Hons) Cloud Computing, TU Dublin.**
