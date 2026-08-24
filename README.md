@@ -237,8 +237,8 @@ PostgreSQL and Pushgateway once each had been evaluated and found unnecessary.
 Requires Docker and Docker Compose.
 
 ```bash
-git clone https://github.com/<your-username>/attendance-project.git
-cd attendance-project
+git clone https://github.com/floodcathal/attendance-project-FYP.git
+cd attendance-project-FYP
 cp .env.example .env    # fill in your own values
 docker compose up -d
 ```
