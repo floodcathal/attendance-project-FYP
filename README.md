@@ -26,6 +26,11 @@ Cathal Flood · C22312211 · April 2026
 iterations, testing methodology and critical evaluation. Opens in the browser — no download
 needed. Credentials visible in configuration screenshots have been redacted.
 
+### 📊 [See the Grafana dashboards → `screenshots/`](screenshots/)
+
+The live occupancy dashboard, the fraud-detection panel, and the four RBAC dashboard
+folders as they appear in the running system.
+
 ---
 
 ## The problem
