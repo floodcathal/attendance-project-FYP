@@ -39,8 +39,9 @@ needed. Credentials visible in configuration screenshots have been redacted.
 
 ### 📊 [See the Grafana dashboards → `screenshots/`](screenshots/)
 
-The live occupancy dashboard, the fraud-detection panel, and the four RBAC dashboard
-folders as they appear in the running system.
+Operations, weekly and room-analytics dashboards, fraud detection, the RBAC folder
+structure, plus the scanner, Node-RED pipeline and infrastructure — 19 shots of the
+running system.
 
 ---
 
